@@ -1,0 +1,8 @@
+{
+    "display_name": "ST-ThemePack",
+    "version": "0.1.0",
+    "loading_order": 0,
+    "js": "index.js",
+    "author": "iiimabbie",
+    "homePage": "https://github.com/iiimabbie/ST-ThemePack"
+}
