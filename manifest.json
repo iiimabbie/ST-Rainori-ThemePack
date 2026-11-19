@@ -1,8 +1,8 @@
 {
-    "display_name": "ST-ThemePack",
+    "display_name": "ST-Rainori-ThemePack",
     "version": "0.1.0",
     "loading_order": 0,
     "js": "index.js",
     "author": "iiimabbie",
-    "homePage": "https://github.com/iiimabbie/ST-ThemePack"
+    "homePage": "https://github.com/iiimabbie/ST-Rainori-ThemePack"
 }

@@ -1,7 +1,7 @@
 import { saveSettingsDebounced } from '../../../../script.js';
 import { extension_settings } from '../../../extensions.js';
 
-const settingsKey = 'ST-ThemePack';
+const settingsKey = 'ST-Rainori-ThemePack';
 const baseUrl = new URL('.', import.meta.url);
 const scriptBlock = /<script\b[^>]*>([\s\S]*?)<\/script>/i;
 
@@ -19,7 +19,7 @@ async function unload() {
     try {
         await previous?.cleanup?.();
     } catch (error) {
-        console.error('[ST-ThemePack]', error);
+        console.error('[ST-Rainori-ThemePack]', error);
     }
 }
 
@@ -51,7 +51,7 @@ async function load(themeId) {
             URL.revokeObjectURL(url);
         }
     } catch (error) {
-        console.error('[ST-ThemePack]', error);
+        console.error('[ST-Rainori-ThemePack]', error);
         toastr.error(`${theme.name}：${error.message}`);
     }
 }
@@ -76,7 +76,7 @@ function buildPanel() {
     drawer.className = 'inline-drawer';
     drawer.innerHTML = `
         <div class="inline-drawer-toggle inline-drawer-header">
-            <b>ST-ThemePack</b>
+            <b>Rainori Themes 🪴</b>
             <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
         </div>
         <div class="inline-drawer-content"></div>`;
