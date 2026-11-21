@@ -1,5 +1,6 @@
 import { saveSettingsDebounced } from '../../../../script.js';
 import { extension_settings } from '../../../extensions.js';
+import { power_user } from '../../../power-user.js';
 
 const settingsKey = 'ST-Rainori-ThemePack';
 const baseUrl = new URL('.', import.meta.url);
@@ -56,6 +57,31 @@ async function load(themeId) {
     }
 }
 
+// 主題指定的酒館設定，透過原生控制項觸發，讓酒館自己套用畫面和存檔。
+const controls = {
+    chat_display: { selector: '#chat_display', event: 'change' },
+    expand_message_actions: { selector: '#expandMessageActions', event: 'input' },
+};
+
+function applySettings(values) {
+    for (const [key, value] of Object.entries(values)) {
+        const { selector, event } = controls[key];
+        const element = $(selector);
+        if (typeof value === 'boolean') element.prop('checked', value);
+        else element.val(String(value));
+        element.trigger(event);
+    }
+}
+
+// 換主題時先還原上一個主題改掉的設定，再記下這個主題要改的原值。
+function switchSettings(themeId) {
+    const settings = extension_settings[settingsKey];
+    applySettings(settings.restore ?? {});
+    const values = themes.find(item => item.id === themeId)?.settings ?? {};
+    settings.restore = Object.fromEntries(Object.keys(values).map(key => [key, power_user[key]]));
+    applySettings(values);
+}
+
 function buildPanel() {
     const select = document.createElement('select');
     select.id = 'st-themes-select';
@@ -65,6 +91,7 @@ function buildPanel() {
     select.value = extension_settings[settingsKey].theme;
     select.addEventListener('change', () => {
         extension_settings[settingsKey].theme = select.value;
+        switchSettings(select.value);
         saveSettingsDebounced();
         load(select.value);
     });
