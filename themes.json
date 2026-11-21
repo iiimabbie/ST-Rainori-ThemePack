@@ -3,6 +3,7 @@
         "id": "dried-petal-tea",
         "name": "Dried Petal Tea",
         "css": "themes/dried-petal-tea/dried-petal-tea.css",
+        "js": "themes/dried-petal-tea/dried-petal-tea.js",
         "settings": { "chat_display": 0, "expand_message_actions": true }
     }
 ]

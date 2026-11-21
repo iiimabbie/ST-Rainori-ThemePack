@@ -4,7 +4,6 @@ import { power_user } from '../../../power-user.js';
 
 const settingsKey = 'ST-Rainori-ThemePack';
 const baseUrl = new URL('.', import.meta.url);
-const scriptBlock = /<script\b[^>]*>([\s\S]*?)<\/script>/i;
 
 let themes = [];
 let activeLink = null;
@@ -24,33 +23,27 @@ async function unload() {
     }
 }
 
-// CSS 用 <link> 載入，主題資料夾裡的相對網址才找得到；<script> 區塊另外當模組執行。
+// CSS 用 <link> 載入，主題資料夾裡的相對網址才找得到；JS 以模組載入，換掉時呼叫它的 cleanup。
 async function load(themeId) {
     const id = ++loadId;
     await unload();
     const theme = themes.find(item => item.id === themeId);
     if (!theme || id !== loadId) return;
 
-    const cssUrl = new URL(theme.css, baseUrl);
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = cssUrl.href;
+    link.href = new URL(theme.css, baseUrl).href;
     document.head.append(link);
     activeLink = link;
 
+    if (!theme.js) return;
     try {
-        const response = await fetch(cssUrl, { cache: 'no-cache' });
-        if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
-        const code = (await response.text()).match(scriptBlock)?.[1];
-        if (!code?.trim() || id !== loadId) return;
-        const url = URL.createObjectURL(new Blob([code], { type: 'text/javascript' }));
-        try {
-            const module = await import(url);
-            if (id === loadId) activeModule = module;
-            else await module.cleanup?.();
-        } finally {
-            URL.revokeObjectURL(url);
-        }
+        // 瀏覽器會快取已載入的模組，同一個網址第二次 import 不會再執行，所以每次載入加上不同的查詢字串。
+        const url = new URL(theme.js, baseUrl);
+        url.searchParams.set('load', String(id));
+        const module = await import(url.href);
+        if (id === loadId) activeModule = module;
+        else await module.cleanup?.();
     } catch (error) {
         console.error('[ST-Rainori-ThemePack]', error);
         toastr.error(`${theme.name}：${error.message}`);
